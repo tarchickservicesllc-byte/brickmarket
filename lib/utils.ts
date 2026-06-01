@@ -48,8 +48,8 @@ export function conditionLabel(condition: string): string {
 export function subscriptionLabel(tier: string): string {
   const map: Record<string, string> = {
     free: 'Free',
-    pro: 'Pro',
-    deal_scanner: 'Deal Scanner',
+    pro: 'Basic',
+    deal_scanner: 'Pro',
   }
   return map[tier] ?? 'Free'
 }

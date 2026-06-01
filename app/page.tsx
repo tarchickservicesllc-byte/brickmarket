@@ -92,7 +92,7 @@ export default async function LandingPage() {
             See features
           </Link>
         </div>
-        <p className="text-sm text-slate-400 mt-4">Free plan available · Pro from $9/mo</p>
+        <p className="text-sm text-slate-400 mt-4">Free plan available · Basic from $10/mo · Pro from $20/mo</p>
       </section>
 
       {/* Flip Score Demo */}
@@ -185,28 +185,28 @@ export default async function LandingPage() {
             </ul>
             <Link href="/signup" className="block text-center border border-blue-700 text-blue-700 hover:bg-blue-50 font-semibold py-2.5 rounded-lg transition-colors text-sm">Get started free</Link>
           </div>
-          {/* Pro */}
+          {/* Basic */}
           <div className="border-2 border-blue-700 rounded-2xl p-6 relative">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-700 text-white text-xs font-bold px-3 py-1 rounded-full">Most Popular</div>
-            <div className="font-bold text-lg text-slate-900 mb-1">Pro</div>
-            <div className="text-3xl font-black text-slate-900 mb-4">$9<span className="text-base font-normal text-slate-400">/mo</span></div>
+            <div className="font-bold text-lg text-slate-900 mb-1">Basic</div>
+            <div className="text-3xl font-black text-slate-900 mb-4">$10<span className="text-base font-normal text-slate-400">/mo</span></div>
             <ul className="space-y-2 text-sm text-slate-600 mb-6">
               {['Unlimited Flip Score','Unlimited Photo valuations','Full AI breakdown','Unlimited portfolio','Budget Builder','Trade Matchmaker','10 price alerts'].map(f => (
                 <li key={f} className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-blue-500 flex-shrink-0" />{f}</li>
               ))}
             </ul>
-            <Link href="/signup" className="block text-center bg-blue-700 hover:bg-blue-800 text-white font-bold py-2.5 rounded-lg transition-colors text-sm">Start Pro</Link>
+            <Link href="/signup" className="block text-center bg-blue-700 hover:bg-blue-800 text-white font-bold py-2.5 rounded-lg transition-colors text-sm">Start Basic</Link>
           </div>
-          {/* Deal Scanner */}
+          {/* Pro */}
           <div className="border border-slate-200 rounded-2xl p-6">
-            <div className="font-bold text-lg text-slate-900 mb-1">Deal Scanner</div>
-            <div className="text-3xl font-black text-slate-900 mb-4">$12<span className="text-base font-normal text-slate-400">/mo</span></div>
+            <div className="font-bold text-lg text-slate-900 mb-1">Pro</div>
+            <div className="text-3xl font-black text-slate-900 mb-4">$20<span className="text-base font-normal text-slate-400">/mo</span></div>
             <ul className="space-y-2 text-sm text-slate-600 mb-6">
-              {['Everything in Pro','Deal Scanner alerts','Email notifications','Unlimited price alerts','Early access to features'].map(f => (
+              {['Everything in Basic','Deal Scanner alerts','Email notifications','Unlimited price alerts','Early access to features'].map(f => (
                 <li key={f} className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-blue-500 flex-shrink-0" />{f}</li>
               ))}
             </ul>
-            <Link href="/signup" className="block text-center border border-blue-700 text-blue-700 hover:bg-blue-50 font-semibold py-2.5 rounded-lg transition-colors text-sm">Start Deal Scanner</Link>
+            <Link href="/signup" className="block text-center border border-blue-700 text-blue-700 hover:bg-blue-50 font-semibold py-2.5 rounded-lg transition-colors text-sm">Start Pro</Link>
           </div>
         </div>
       </section>

@@ -119,20 +119,20 @@ function SettingsContent() {
  <div className="space-y-3">
  <div className="border border-gray-100 rounded-xl p-4">
  <div className="flex items-center justify-between mb-2">
- <div><div className="font-semibold">Pro</div><div className="text-xs text-gray-400">Unlimited scans · Budget Builder · Trades</div></div>
+ <div><div className="font-semibold">Basic</div><div className="text-xs text-gray-400">Unlimited scans · Budget Builder · Trades</div></div>
  <div className="font-black text-lg">$9<span className="text-sm font-normal text-gray-400">/mo</span></div>
  </div>
  <button onClick={() => subscribe(process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_MONTHLY ?? '')} disabled={!!upgradeLoading} className="w-full bg-brick hover:bg-brick-dark text-white font-semibold py-2 rounded-lg text-sm transition-colors disabled:opacity-60">
- {upgradeLoading ? 'Loading…' : 'Upgrade to Pro'}
+ {upgradeLoading ? 'Loading…' : 'Upgrade to Basic'}
  </button>
  </div>
  <div className="border border-gray-100 rounded-xl p-4">
  <div className="flex items-center justify-between mb-2">
- <div><div className="font-semibold">Deal Scanner</div><div className="text-xs text-gray-400">Everything in Pro + SMS + deal alerts</div></div>
+ <div><div className="font-semibold">Pro</div><div className="text-xs text-gray-400">Everything in Pro + SMS + deal alerts</div></div>
  <div className="font-black text-lg">$12<span className="text-sm font-normal text-gray-400">/mo</span></div>
  </div>
  <button onClick={() => subscribe(process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_DEAL_SCANNER ?? '')} disabled={!!upgradeLoading} className="w-full border border-brick text-brick hover:bg-brick/5 font-semibold py-2 rounded-lg text-sm transition-colors disabled:opacity-60">
- {upgradeLoading ? 'Loading…' : 'Upgrade to Deal Scanner'}
+ {upgradeLoading ? 'Loading…' : 'Upgrade to Pro'}
  </button>
  </div>
  </div>
@@ -141,7 +141,7 @@ function SettingsContent() {
  {tier === 'pro' && (
  <div className="border border-gray-100 rounded-xl p-4">
  <div className="flex items-center justify-between mb-2">
- <div><div className="font-semibold">Deal Scanner</div><div className="text-xs text-gray-400">Add SMS alerts + automated deal scanning</div></div>
+ <div><div className="font-semibold">Pro</div><div className="text-xs text-gray-400">Add SMS alerts + automated deal scanning</div></div>
  <div className="font-black text-lg">$12<span className="text-sm font-normal text-gray-400">/mo</span></div>
  </div>
  <button onClick={() => subscribe(process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_DEAL_SCANNER ?? '')} className="w-full border border-brick text-brick hover:bg-brick/5 font-semibold py-2 rounded-lg text-sm transition-colors">

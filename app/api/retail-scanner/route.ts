@@ -16,45 +16,49 @@ interface RetailDeal {
 
 // ── Walmart ──────────────────────────────────────────────────────────────────
 async function scanWalmart(): Promise<RetailDeal[]> {
-  const key = process.env.WALMART_API_KEY
+  const key = process.env.RAPIDAPI_KEY
   if (!key) return []
 
   const deals: RetailDeal[] = []
   try {
-    const res = await fetch(
-      'https://developer.api.walmart.com/api-proxy/service/affil/product/v2/search?query=lego&facet=on&facet.filter=special_offers:Rollback&numItems=25',
-      {
-        headers: {
-          'WM_SEC.KEY_VERSION': '1',
-          'WM_CONSUMER.ID': key,
-          'WM_CONSUMER.intimestamp': Date.now().toString(),
-          'Accept': 'application/json',
-        },
+    // Search for LEGO clearance/rollback items
+    const [clearanceRes, rollbackRes] = await Promise.all([
+      fetch('https://realtime-walmart-data.p.rapidapi.com/search?keyword=lego+clearance', {
+        headers: { 'x-rapidapi-key': key, 'x-rapidapi-host': 'realtime-walmart-data.p.rapidapi.com' },
+      }),
+      fetch('https://realtime-walmart-data.p.rapidapi.com/search?keyword=lego+rollback', {
+        headers: { 'x-rapidapi-key': key, 'x-rapidapi-host': 'realtime-walmart-data.p.rapidapi.com' },
+      }),
+    ])
+
+    const seen = new Set<string>()
+    for (const res of [clearanceRes, rollbackRes]) {
+      if (!res.ok) continue
+      const data = await res.json() as { results?: Array<{ name?: string; price?: string; originalPrice?: string; savings?: string; canonicalUrl?: string; thumbnailUrl?: string }> }
+      for (const item of (data.results ?? [])) {
+        if (!item.name?.toLowerCase().includes('lego')) continue
+        if (seen.has(item.canonicalUrl ?? '')) continue
+        seen.add(item.canonicalUrl ?? '')
+
+        const salePrice = parseFloat((item.price ?? '0').replace(/[^0-9.]/g, ''))
+        const origPrice = parseFloat((item.originalPrice ?? '0').replace(/[^0-9.]/g, ''))
+        if (!origPrice || !salePrice || salePrice >= origPrice) continue
+        const discount = Math.round(((origPrice - salePrice) / origPrice) * 100)
+        if (discount < 15) continue
+
+        const setMatch = item.name.match(/\b(\d{4,6})\b/)
+        deals.push({
+          platform: 'walmart',
+          title: item.name,
+          set_number: setMatch?.[1] ?? null,
+          url: item.canonicalUrl ?? 'https://walmart.com',
+          sale_price: salePrice,
+          original_price: origPrice,
+          discount_percent: discount,
+          image_url: item.thumbnailUrl ?? null,
+          location: 'Walmart.com',
+        })
       }
-    )
-    if (!res.ok) return []
-    const data = await res.json() as { items?: Array<{ name?: string; salePrice?: number; msrp?: number; productUrl?: string; thumbnailImage?: string }> }
-
-    for (const item of (data.items ?? [])) {
-      if (!item.name?.toLowerCase().includes('lego')) continue
-      const salePrice = item.salePrice ?? 0
-      const msrp = item.msrp ?? salePrice
-      if (msrp <= 0 || salePrice >= msrp) continue
-      const discount = Math.round(((msrp - salePrice) / msrp) * 100)
-      if (discount < 20) continue
-
-      const setMatch = item.name.match(/\b(\d{4,6})\b/)
-      deals.push({
-        platform: 'walmart',
-        title: item.name ?? 'LEGO Set',
-        set_number: setMatch?.[1] ?? null,
-        url: item.productUrl ?? 'https://walmart.com',
-        sale_price: salePrice,
-        original_price: msrp,
-        discount_percent: discount,
-        image_url: item.thumbnailImage ?? null,
-        location: 'Walmart.com',
-      })
     }
   } catch (err) {
     console.error('Walmart scan error:', err)

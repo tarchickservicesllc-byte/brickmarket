@@ -22,7 +22,7 @@ const config: Config = {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         primary: {
-          DEFAULT: '#E24B4A',
+          DEFAULT: '#1d4ed8',
           foreground: '#ffffff',
         },
         secondary: {
@@ -49,10 +49,10 @@ const config: Config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
-        brick: '#E24B4A',
-        'brick-dark': '#c73b3a',
-        surface: '#F9F9F7',
-        'text-main': '#1a1a1a',
+        brick: '#1d4ed8',
+        'brick-dark': '#1e40af',
+        surface: '#f8fafc',
+        'text-main': '#0f172a',
       },
       borderRadius: {
         lg: 'var(--radius)',

@@ -166,40 +166,47 @@ async function scanAmazon(): Promise<RetailDeal[]> {
 
   const deals: RetailDeal[] = []
   try {
-    const res = await fetch(
-      'https://real-time-amazon-data.p.rapidapi.com/search?query=lego+sale+clearance&country=US&category_id=TOYS&sort_by=PRICE_LOW_TO_HIGH',
-      {
-        headers: {
-          'x-rapidapi-key': key,
-          'x-rapidapi-host': 'real-time-amazon-data.p.rapidapi.com',
-        },
+    const queries = ['lego sale', 'lego clearance', 'lego deals']
+    const seen = new Set<string>()
+
+    for (const query of queries) {
+      const res = await fetch(
+        `https://real-time-amazon-data.p.rapidapi.com/search?query=${encodeURIComponent(query)}&country=US`,
+        {
+          headers: {
+            'x-rapidapi-key': key,
+            'x-rapidapi-host': 'real-time-amazon-data.p.rapidapi.com',
+          },
+        }
+      )
+      if (!res.ok) continue
+      const data = await res.json() as { data?: { products?: Array<{ product_title?: string; product_price?: string; product_original_price?: string; product_url?: string; product_photo?: string }> } }
+
+      for (const product of (data?.data?.products ?? [])) {
+        const title = product.product_title ?? ''
+        if (!title.toLowerCase().includes('lego')) continue
+        if (seen.has(product.product_url ?? '')) continue
+        seen.add(product.product_url ?? '')
+
+        const salePrice = parseFloat((product.product_price ?? '0').replace(/[^0-9.]/g, ''))
+        const origPrice = parseFloat((product.product_original_price ?? '0').replace(/[^0-9.]/g, ''))
+        if (!origPrice || !salePrice || salePrice >= origPrice) continue
+        const discount = Math.round(((origPrice - salePrice) / origPrice) * 100)
+        if (discount < 15) continue
+
+        const setMatch = title.match(/\b(\d{4,6})\b/)
+        deals.push({
+          platform: 'amazon',
+          title,
+          set_number: setMatch?.[1] ?? null,
+          url: product.product_url ?? 'https://amazon.com',
+          sale_price: salePrice,
+          original_price: origPrice,
+          discount_percent: discount,
+          image_url: product.product_photo ?? null,
+          location: 'Amazon.com',
+        })
       }
-    )
-    if (!res.ok) return []
-    const data = await res.json() as { data?: { products?: Array<{ product_title?: string; product_price?: string; product_original_price?: string; product_url?: string; product_photo?: string }> } }
-
-    for (const product of (data?.data?.products ?? [])) {
-      const title = product.product_title ?? ''
-      if (!title.toLowerCase().includes('lego')) continue
-
-      const salePrice = parseFloat((product.product_price ?? '0').replace(/[^0-9.]/g, ''))
-      const origPrice = parseFloat((product.product_original_price ?? '0').replace(/[^0-9.]/g, ''))
-      if (!origPrice || !salePrice || salePrice >= origPrice) continue
-      const discount = Math.round(((origPrice - salePrice) / origPrice) * 100)
-      if (discount < 20) continue
-
-      const setMatch = title.match(/\b(\d{4,6})\b/)
-      deals.push({
-        platform: 'amazon',
-        title,
-        set_number: setMatch?.[1] ?? null,
-        url: product.product_url ?? 'https://amazon.com',
-        sale_price: salePrice,
-        original_price: origPrice,
-        discount_percent: discount,
-        image_url: product.product_photo ?? null,
-        location: 'Amazon.com',
-      })
     }
   } catch (err) {
     console.error('Amazon scan error:', err)

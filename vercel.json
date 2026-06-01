@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/deal-scanner",
-      "schedule": "0 */2 * * *"
+      "schedule": "0 9 * * *"
     },
     {
       "path": "/api/leaderboard/reset",

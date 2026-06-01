@@ -5,6 +5,10 @@
       "schedule": "0 9 * * *"
     },
     {
+      "path": "/api/retail-scanner",
+      "schedule": "0 8 * * *"
+    },
+    {
       "path": "/api/leaderboard/reset",
       "schedule": "0 0 * * 0"
     }

@@ -151,6 +151,14 @@ function SettingsContent() {
  )}
  </div>
 
+ <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 flex items-center justify-between">
+  <div>
+   <div className="font-semibold text-slate-900 text-sm">Install BrickMarket on your phone</div>
+   <div className="text-xs text-slate-500 mt-0.5">Add to home screen on iPhone or Android — works like a native app.</div>
+  </div>
+  <a href="/install" className="text-xs font-semibold text-blue-700 hover:underline flex-shrink-0 ml-4">How to install →</a>
+ </div>
+
  <div className="bg-white rounded-2xl border border-gray-100 p-6">
  <h2 className="font-bold mb-2">Seller Payouts</h2>
  <p className="text-sm text-gray-500 mb-4">Connect a Stripe account to receive payouts when your listings sell.</p>

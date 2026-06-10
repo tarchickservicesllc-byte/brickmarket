@@ -868,10 +868,10 @@ export default function TradesPage() {
       </div>
 
       {/* Legal notice */}
-      <div className="flex items-start gap-3 bg-amber-950/40 border border-amber-800/50 rounded-xl px-4 py-3">
+      <div className="flex items-start gap-3 bg-amber-500/15 border border-amber-500/40 rounded-xl px-4 py-3">
         <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
-        <p className="text-xs text-amber-300 leading-relaxed">
-          <strong>Disclaimer:</strong> BrickMarket is a discovery platform only. All trades are between users. BrickMarket and Tarchick Services LLC are not responsible for trade outcomes, disputes, or item condition. Trade at your own risk.
+        <p className="text-xs text-amber-200 leading-relaxed">
+          <strong className="text-amber-300">Disclaimer:</strong> BrickMarket is a discovery platform only. All trades are between users. BrickMarket and Tarchick Services LLC are not responsible for trade outcomes, disputes, or item condition. Trade at your own risk.
         </p>
       </div>
 
@@ -914,7 +914,7 @@ export default function TradesPage() {
               <div className="w-6 h-6 bg-emerald-900/50 rounded-full flex items-center justify-center">
                 <span className="text-emerald-400 text-xs font-bold">H</span>
               </div>
-              <h3 className="font-semibold text-slate-200">I have to trade</h3>
+              <h3 className="font-semibold text-white">I have to trade</h3>
             </div>
             <div className="space-y-2 mb-3">
               <SetSearch onSelect={s => setHaveSet(s)} placeholder="Search for a set…" />
@@ -926,7 +926,7 @@ export default function TradesPage() {
                     </button>
                   ))}
                 </div>
-                <input type="number" value={haveValue} onChange={e => setHaveValue(e.target.value)} placeholder="Your value ($)" className="px-3 py-2 bg-slate-900 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+                <input type="number" value={haveValue} onChange={e => setHaveValue(e.target.value)} placeholder="Your value ($)" className="px-3 py-2 bg-slate-900 border border-slate-600 text-white placeholder-slate-400 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30" />
               </div>
               <button onClick={addHaveSet} disabled={!haveSet} className="w-full flex items-center justify-center gap-2 py-2 bg-emerald-700 hover:bg-emerald-600 disabled:opacity-40 text-white font-semibold rounded-xl text-sm transition-colors">
                 <Plus className="w-4 h-4" /> Add set
@@ -934,7 +934,7 @@ export default function TradesPage() {
             </div>
             <div className="space-y-2">
               {haveSets.map(s => <SetChip key={s.id} s={s} onRemove={() => setHaveSets(p => p.filter(x => x.id !== s.id))} />)}
-              {haveSets.length === 0 && <p className="text-xs text-slate-500 text-center py-4 border border-dashed border-slate-700 rounded-xl">No sets added yet</p>}
+              {haveSets.length === 0 && <p className="text-xs text-slate-400 text-center py-4 border border-dashed border-slate-600 rounded-xl">No sets added yet</p>}
             </div>
           </div>
           <div>
@@ -942,25 +942,25 @@ export default function TradesPage() {
               <div className="w-6 h-6 bg-blue-900/50 rounded-full flex items-center justify-center">
                 <span className="text-blue-400 text-xs font-bold">W</span>
               </div>
-              <h3 className="font-semibold text-slate-200">I want</h3>
+              <h3 className="font-semibold text-white">I want</h3>
             </div>
             <div className="space-y-2 mb-3">
               <SetSearch onSelect={s => { if (!wantSets.find(x => x.id === s.id)) setWantSets(p => [...p, { ...s, condition: 'used' }]) }} placeholder="Search for a set you want…" />
             </div>
             <div className="space-y-2">
               {wantSets.map(s => <SetChip key={s.id} s={s} onRemove={() => setWantSets(p => p.filter(x => x.id !== s.id))} />)}
-              {wantSets.length === 0 && <p className="text-xs text-slate-500 text-center py-4 border border-dashed border-slate-700 rounded-xl">No sets added yet</p>}
+              {wantSets.length === 0 && <p className="text-xs text-slate-400 text-center py-4 border border-dashed border-slate-600 rounded-xl">No sets added yet</p>}
             </div>
           </div>
         </div>
 
         <div className="mt-5 pt-5 border-t border-slate-700 grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1.5">Notes (optional)</label>
-            <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={3} placeholder="Condition details, ratios, location…" className="w-full px-3 py-2 bg-slate-900 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 resize-none" />
+            <label className="block text-xs font-semibold text-slate-300 mb-1.5">Notes (optional)</label>
+            <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={3} placeholder="Condition details, ratios, location…" className="w-full px-3 py-2 bg-slate-900 border border-slate-600 text-white placeholder-slate-400 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 resize-none" />
           </div>
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1.5">Photo of your sets (optional)</label>
+            <label className="block text-xs font-semibold text-slate-300 mb-1.5">Photo of your sets (optional)</label>
             <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) { setPhotoFile(f); setPhotoPreview(URL.createObjectURL(f)) } }} />
             {photoPreview ? (
               <div className="relative">
@@ -977,7 +977,7 @@ export default function TradesPage() {
         </div>
 
         <div className="mt-4 flex items-center justify-between flex-wrap gap-3">
-          <p className="text-xs text-slate-500">You&apos;ll receive an email when a match is found.</p>
+          <p className="text-xs text-slate-400">You&apos;ll receive an email when a match is found.</p>
           <button
             onClick={() => {
               if (haveSets.length === 0 || wantSets.length === 0) { toast.error('Add at least one set to both lists'); return }
@@ -999,7 +999,7 @@ export default function TradesPage() {
           <div className="flex items-center gap-2 flex-wrap">
             <div className="flex items-center gap-2 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2">
               <Search className="w-3.5 h-3.5 text-slate-400" />
-              <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search by username…" className="text-xs outline-none w-28 bg-transparent text-slate-100 placeholder-slate-500" />
+              <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search by username…" className="text-xs outline-none w-28 bg-transparent text-white placeholder-slate-400" />
             </div>
             <div className="flex items-center gap-1">
               <Filter className="w-3.5 h-3.5 text-slate-400" />

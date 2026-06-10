@@ -122,44 +122,41 @@ export default function MessagesPage() {
  return (
  <div className="flex h-[calc(100vh-10rem)] gap-4">
  {/* Threads list */}
- <div className="w-72 flex-shrink-0 bg-white rounded-2xl border border-gray-100 overflow-y-auto">
- <div className="p-4 border-b border-gray-100">
- <h1 className="font-bold">Messages {totalUnread > 0 && <span className="ml-1 text-xs bg-brick text-white px-1.5 py-0.5 rounded-full">{totalUnread}</span>}</h1>
+ <div className="w-72 flex-shrink-0 bg-slate-800 rounded-2xl border border-slate-700 overflow-y-auto">
+ <div className="p-4 border-b border-slate-700">
+ <h1 className="font-bold text-white">Messages {totalUnread > 0 && <span className="ml-1 text-xs bg-blue-600 text-white px-1.5 py-0.5 rounded-full">{totalUnread}</span>}</h1>
  </div>
  {threads.length === 0 ? (
- <div className="p-8 text-center text-gray-400 text-sm">No messages yet</div>
+ <div className="p-8 text-center text-slate-500 text-sm">No messages yet</div>
  ) : (
  threads.map(t => (
- <button
- key={t.listing_id}
- onClick={() => openThread(t)}
- className={`w-full text-left px-4 py-3 border-b border-gray-50 hover:bg-surface transition-colors ${selectedThread?.listing_id === t.listing_id ? 'bg-brick/5' : ''}`}
- >
+ <button key={t.listing_id} onClick={() => openThread(t)}
+ className={`w-full text-left px-4 py-3 border-b border-slate-700 hover:bg-slate-700 transition-colors ${selectedThread?.listing_id === t.listing_id ? 'bg-blue-900/30' : ''}`}>
  <div className="flex items-center justify-between">
- <span className="font-medium text-sm">{t.other_user}</span>
- {t.unread > 0 && <span className="text-xs bg-brick text-white px-1.5 py-0.5 rounded-full">{t.unread}</span>}
+ <span className="font-medium text-sm text-slate-100">{t.other_user}</span>
+ {t.unread > 0 && <span className="text-xs bg-blue-600 text-white px-1.5 py-0.5 rounded-full">{t.unread}</span>}
  </div>
- <div className="text-xs text-gray-400 truncate">{t.listing_title}</div>
- <div className="text-xs text-gray-400 truncate">{t.last_message}</div>
+ <div className="text-xs text-slate-500 truncate">{t.listing_title}</div>
+ <div className="text-xs text-slate-500 truncate">{t.last_message}</div>
  </button>
  ))
  )}
  </div>
 
  {/* Conversation */}
- <div className="flex-1 bg-white rounded-2xl border border-gray-100 flex flex-col overflow-hidden">
+ <div className="flex-1 bg-slate-800 rounded-2xl border border-slate-700 flex flex-col overflow-hidden">
  {selectedThread ? (
  <>
- <div className="p-4 border-b border-gray-100">
- <div className="font-semibold">@{selectedThread.other_user}</div>
- <div className="text-xs text-gray-400">{selectedThread.listing_title}</div>
+ <div className="p-4 border-b border-slate-700">
+ <div className="font-semibold text-white">@{selectedThread.other_user}</div>
+ <div className="text-xs text-slate-400">{selectedThread.listing_title}</div>
  </div>
- <div className="flex-1 overflow-y-auto p-4 space-y-2">
+ <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-slate-950">
  {messages.map(m => (
  <div key={m.id} className={`flex ${m.sender_id === currentUserId ? 'justify-end' : 'justify-start'}`}>
- <div className={`max-w-xs px-3 py-2 rounded-2xl text-sm ${m.sender_id === currentUserId ? 'bg-brick text-white rounded-br-sm' : 'bg-surface text-text-main rounded-bl-sm'}`}>
+ <div className={`max-w-xs px-3 py-2 rounded-2xl text-sm ${m.sender_id === currentUserId ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-100'}`}>
  {m.body}
- <div className={`text-xs mt-0.5 ${m.sender_id === currentUserId ? 'text-white/60' : 'text-gray-400'}`}>
+ <div className={`text-xs mt-0.5 ${m.sender_id === currentUserId ? 'text-white/60' : 'text-slate-500'}`}>
  {new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
  </div>
  </div>
@@ -167,24 +164,20 @@ export default function MessagesPage() {
  ))}
  <div ref={bottomRef} />
  </div>
- <div className="p-4 border-t border-gray-100 flex gap-2">
- <input
- type="text"
- value={newMsg}
- onChange={e => setNewMsg(e.target.value)}
+ <div className="p-4 border-t border-slate-700 flex gap-2 bg-slate-800">
+ <input type="text" value={newMsg} onChange={e => setNewMsg(e.target.value)}
  onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
  placeholder="Type a message…"
- className="flex-1 px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brick/30"
- />
- <button onClick={send} disabled={sending || !newMsg.trim()} className="bg-brick hover:bg-brick-dark text-white px-4 py-2 rounded-xl text-sm font-semibold disabled:opacity-50 transition-colors">
+ className="flex-1 px-3 py-2 bg-slate-900 border border-slate-600 text-white placeholder-slate-400 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30" />
+ <button onClick={send} disabled={sending || !newMsg.trim()} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-semibold disabled:opacity-50 transition-colors">
  Send
  </button>
  </div>
  </>
  ) : (
- <div className="flex-1 flex items-center justify-center text-gray-400">
+ <div className="flex-1 flex items-center justify-center text-slate-500">
  <div className="text-center">
- <div className="text-5xl mb-3"></div>
+ <div className="text-5xl mb-3">💬</div>
  <p>Select a conversation</p>
  </div>
  </div>

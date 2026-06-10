@@ -16,6 +16,7 @@ export async function GET(request: Request) {
   const year = lastWeek.getFullYear()
 
   // Find top flip of the week
+  type FlipWithUser = { id: string; user_id: string; roi_percent: number; profit_dollars: number; user: { id: string; username: string } | null; lego_set: { name: string } | null }
   const { data: topFlip } = await service
     .from('flip_entries')
     .select('*, user:profiles(id, username), lego_set:lego_sets(name)')
@@ -23,7 +24,7 @@ export async function GET(request: Request) {
     .eq('year', year)
     .order('roi_percent', { ascending: false })
     .limit(1)
-    .single()
+    .single() as unknown as { data: FlipWithUser | null }
 
   if (!topFlip) return NextResponse.json({ message: 'No flips this week' })
 

@@ -50,11 +50,12 @@ export async function POST(request: Request) {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
   // Run matching algorithm
+  type OfferWithUser = { id: string; user_id: string; have_set_ids: number[]; want_set_ids: number[]; user: { id: string; username: string; phone: string | null } | null }
   const { data: potentialMatches } = await service
     .from('trade_offers')
     .select('*, user:profiles(id, username, phone)')
     .eq('status', 'open')
-    .neq('user_id', user.id)
+    .neq('user_id', user.id) as unknown as { data: OfferWithUser[] | null }
 
   const matches = []
   for (const other of (potentialMatches ?? [])) {

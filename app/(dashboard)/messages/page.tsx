@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
 interface Thread {
- listing_id: string
+ listing_id: string | null
  listing_title: string
  other_user: string
  other_user_id: string
@@ -38,6 +38,7 @@ export default function MessagesPage() {
  if (!user) return
  setCurrentUserId(user.id)
 
+ type MsgRow = { id: string; listing_id: string | null; body: string; sender_id: string; recipient_id: string; is_read: boolean; created_at: string; listing: { title: string } | null; sender: { username: string } | null; recipient: { username: string } | null }
  const { data: msgs } = await supabase
  .from('messages')
  .select(`
@@ -47,13 +48,13 @@ export default function MessagesPage() {
  recipient:profiles!messages_recipient_id_fkey(username)
  `)
  .or(`sender_id.eq.${user.id},recipient_id.eq.${user.id}`)
- .order('created_at', { ascending: false })
+ .order('created_at', { ascending: false }) as unknown as { data: MsgRow[] | null }
 
  if (!msgs) return
 
  const threadMap: Record<string, Thread> = {}
  for (const m of msgs) {
- const key = m.listing_id
+ const key = m.listing_id ?? 'no-listing'
  const otherIsRecipient = m.sender_id === user.id
  const otherId = otherIsRecipient ? m.recipient_id : m.sender_id
  const otherName = otherIsRecipient
@@ -86,14 +87,14 @@ export default function MessagesPage() {
  const { data } = await supabase
  .from('messages')
  .select('*')
- .eq('listing_id', thread.listing_id)
+ .eq('listing_id', thread.listing_id ?? '')
  .or(`sender_id.eq.${user.id},recipient_id.eq.${user.id}`)
  .order('created_at', { ascending: true })
  setMessages((data ?? []) as Msg[])
  // Mark as read
  await supabase.from('messages')
  .update({ is_read: true })
- .eq('listing_id', thread.listing_id)
+ .eq('listing_id', thread.listing_id ?? '')
  .eq('recipient_id', user.id)
  setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 100)
  }

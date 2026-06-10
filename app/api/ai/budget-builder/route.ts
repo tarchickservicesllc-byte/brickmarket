@@ -88,7 +88,7 @@ export async function POST(request: Request) {
     timeline_months,
     risk_tolerance,
     theme_preference: theme_preference ?? null,
-    ai_plan: plan,
+    ai_plan: plan as import('@/types/database').Json,
     projected_return: (plan as { projected_return?: number }).projected_return ?? null,
     projected_roi_percent: (plan as { projected_roi_percent?: number }).projected_roi_percent ?? null,
   }).select().single()

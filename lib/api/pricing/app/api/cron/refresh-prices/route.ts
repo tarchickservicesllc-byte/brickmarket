@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
 
     if (error) throw error
 
-    const setNumbers = [...new Set(listings.map((l: any) => l.set_number))] as string[]
+    const setNumbers = Array.from(new Set(listings.map((l: any) => l.set_number))) as string[]
     console.log(`[cron/refresh-prices] Refreshing ${setNumbers.length} sets...`)
 
     const results = { success: 0, failed: 0, sets: [] as string[] }

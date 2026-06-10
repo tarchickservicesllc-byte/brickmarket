@@ -1,4 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import OAuth from 'oauth-1.0a'
 import crypto from 'crypto'
 
@@ -37,7 +39,7 @@ const blOAuth = OAuth({
     secret: process.env.BRICKLINK_CONSUMER_SECRET!,
   },
   signature_method: 'HMAC-SHA1',
-  hash_function(base, key) {
+  hash_function(base: string, key: string) {
     return crypto.createHmac('sha1', key).update(base).digest('base64')
   },
 })

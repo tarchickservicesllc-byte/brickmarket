@@ -83,6 +83,15 @@ create table public.messages (
   created_at timestamptz default now()
 );
 
+-- Trade chat messages (per match, separate from listing messages)
+create table public.trade_messages (
+  id uuid default gen_random_uuid() primary key,
+  match_id uuid references public.trade_matches(id) on delete cascade not null,
+  sender_id uuid references public.profiles(id) on delete cascade not null,
+  body text not null,
+  created_at timestamptz default now()
+);
+
 -- Trade matchmaking
 create table public.trade_offers (
   id uuid default gen_random_uuid() primary key,
@@ -227,6 +236,7 @@ alter table public.listings enable row level security;
 alter table public.messages enable row level security;
 alter table public.trade_offers enable row level security;
 alter table public.trade_matches enable row level security;
+alter table public.trade_messages enable row level security;
 alter table public.deal_watches enable row level security;
 alter table public.deals_found enable row level security;
 alter table public.deal_alerts_sent enable row level security;
@@ -258,6 +268,17 @@ create policy "Users manage own trades" on public.trade_offers for all using (au
 
 -- Trade matches
 create policy "Users see own trade matches" on public.trade_matches for select using (auth.uid() = user_a_id or auth.uid() = user_b_id);
+
+-- Trade messages
+create policy "Match participants can read trade messages" on public.trade_messages
+  for select using (
+    exists (select 1 from trade_matches where id = match_id and (user_a_id = auth.uid() or user_b_id = auth.uid()))
+  );
+create policy "Match participants can send trade messages" on public.trade_messages
+  for insert with check (
+    auth.uid() = sender_id and
+    exists (select 1 from trade_matches where id = match_id and (user_a_id = auth.uid() or user_b_id = auth.uid()))
+  );
 
 -- Deal watches
 create policy "Users manage own watches" on public.deal_watches for all using (auth.uid() = user_id);
@@ -304,6 +325,78 @@ $$ language plpgsql security definer;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
+
+-- ============================================================
+-- TRUST & SAFETY SYSTEM (run in Supabase SQL editor)
+-- ============================================================
+
+-- Extend trade_matches with full workflow tracking
+alter table public.trade_matches
+  add column if not exists user_a_photo_url text,
+  add column if not exists user_b_photo_url text,
+  add column if not exists user_a_trade_terms_accepted boolean default false,
+  add column if not exists user_b_trade_terms_accepted boolean default false,
+  add column if not exists user_a_ship_agreed boolean default false,
+  add column if not exists user_b_ship_agreed boolean default false,
+  add column if not exists user_a_tracking text,
+  add column if not exists user_b_tracking text,
+  add column if not exists completed_at timestamptz,
+  add column if not exists dispute_filed boolean default false;
+
+-- Trade reviews (1-5 stars + written review after trade completion)
+create table if not exists public.trade_reviews (
+  id uuid default gen_random_uuid() primary key,
+  match_id uuid references public.trade_matches(id) on delete cascade not null,
+  reviewer_id uuid references public.profiles(id) on delete cascade not null,
+  reviewee_id uuid references public.profiles(id) on delete cascade not null,
+  rating int not null check (rating >= 1 and rating <= 5),
+  body text,
+  created_at timestamptz default now(),
+  unique(match_id, reviewer_id)
+);
+alter table public.trade_reviews enable row level security;
+create policy "Reviews are public" on public.trade_reviews for select using (true);
+create policy "Users submit own reviews" on public.trade_reviews for insert with check (auth.uid() = reviewer_id);
+
+-- Trade disputes
+create table if not exists public.trade_disputes (
+  id uuid default gen_random_uuid() primary key,
+  match_id uuid references public.trade_matches(id) on delete cascade not null,
+  filed_by uuid references public.profiles(id) on delete cascade not null,
+  reason text not null,
+  description text not null,
+  status text default 'open',
+  created_at timestamptz default now()
+);
+alter table public.trade_disputes enable row level security;
+create policy "Users see own disputes" on public.trade_disputes for select using (auth.uid() = filed_by);
+create policy "Users file disputes" on public.trade_disputes for insert with check (auth.uid() = filed_by);
+
+-- Add trust stats to profiles
+alter table public.profiles
+  add column if not exists trade_count int default 0,
+  add column if not exists trade_rating_avg numeric(3,2),
+  add column if not exists email_verified boolean default false;
+
+-- Backfill email_verified for existing confirmed users
+update public.profiles p set email_verified = true
+from auth.users u where u.id = p.id and u.email_confirmed_at is not null;
+
+-- Trigger to set email_verified when user confirms email
+create or replace function public.handle_email_verification()
+returns trigger as $$
+begin
+  if new.email_confirmed_at is not null and (old.email_confirmed_at is null or old.email_confirmed_at != new.email_confirmed_at) then
+    update public.profiles set email_verified = true where id = new.id;
+  end if;
+  return new;
+end;
+$$ language plpgsql security definer;
+
+drop trigger if exists on_email_verified on auth.users;
+create trigger on_email_verified
+  after update on auth.users
+  for each row execute procedure public.handle_email_verification();
 
 -- Seed a few sample LEGO sets
 insert into public.lego_sets (set_number, name, theme, year_released, retail_price, piece_count, image_url, is_retired)

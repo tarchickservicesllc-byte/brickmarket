@@ -24,12 +24,13 @@ export async function POST(request: Request) {
 
     if (listingId && buyerId) {
       // Mark listing sold
+      type SoldListing = { id: string; seller_id: string; title: string; price: number; seller: { username: string; id: string } | null; buyer: { username: string } | null }
       const { data: listing } = await service
         .from('listings')
         .update({ status: 'sold', buyer_id: buyerId, sold_at: new Date().toISOString(), stripe_payment_intent_id: pi.id })
         .eq('id', listingId)
         .select('*, seller:profiles!listings_seller_id_fkey(username, id), buyer:profiles!listings_buyer_id_fkey(username)')
-        .single()
+        .single() as unknown as { data: SoldListing | null }
 
       // Send emails
       if (listing) {

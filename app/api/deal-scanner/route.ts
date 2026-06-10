@@ -54,10 +54,11 @@ export async function GET(request: Request) {
 
   const service = await createServiceClient()
 
+  type WatchWithUser = { id: string; user_id: string; zip_code: string | null; radius_miles: number; max_price: number | null; set_ids: number[]; notify_email: boolean; notify_sms: boolean; user: { id: string; phone: string | null; subscription_tier: string } | null }
   const { data: watches } = await service
     .from('deal_watches')
     .select('*, user:profiles(id, phone, subscription_tier)')
-    .eq('is_active', true)
+    .eq('is_active', true) as unknown as { data: WatchWithUser[] | null }
 
   if (!watches?.length) return NextResponse.json({ processed: 0 })
 

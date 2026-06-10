@@ -18,6 +18,9 @@ export interface Database {
           subscription_status: string
           flip_score_scans_used: number
           photo_scans_used: number
+          trade_count: number
+          trade_rating_avg: number | null
+          email_verified: boolean
           created_at: string
         }
         Insert: {
@@ -34,6 +37,9 @@ export interface Database {
           subscription_status?: string
           flip_score_scans_used?: number
           photo_scans_used?: number
+          trade_count?: number
+          trade_rating_avg?: number | null
+          email_verified?: boolean
           created_at?: string
         }
         Update: {
@@ -50,8 +56,12 @@ export interface Database {
           subscription_status?: string
           flip_score_scans_used?: number
           photo_scans_used?: number
+          trade_count?: number
+          trade_rating_avg?: number | null
+          email_verified?: boolean
           created_at?: string
         }
+        Relationships: []
       }
       lego_sets: {
         Row: {
@@ -114,6 +124,7 @@ export interface Database {
           flip_score_updated_at?: string | null
           created_at?: string
         }
+        Relationships: []
       }
       portfolio_items: {
         Row: {
@@ -149,6 +160,7 @@ export interface Database {
           notes?: string | null
           created_at?: string
         }
+        Relationships: []
       }
       listings: {
         Row: {
@@ -208,11 +220,12 @@ export interface Database {
           sold_at?: string | null
           created_at?: string
         }
+        Relationships: []
       }
       messages: {
         Row: {
           id: string
-          listing_id: string
+          listing_id: string | null
           sender_id: string
           recipient_id: string
           body: string
@@ -221,7 +234,7 @@ export interface Database {
         }
         Insert: {
           id?: string
-          listing_id: string
+          listing_id?: string | null
           sender_id: string
           recipient_id: string
           body: string
@@ -230,13 +243,38 @@ export interface Database {
         }
         Update: {
           id?: string
-          listing_id?: string
+          listing_id?: string | null
           sender_id?: string
           recipient_id?: string
           body?: string
           is_read?: boolean
           created_at?: string
         }
+        Relationships: []
+      }
+      trade_messages: {
+        Row: {
+          id: string
+          match_id: string
+          sender_id: string
+          body: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          match_id: string
+          sender_id: string
+          body: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          match_id?: string
+          sender_id?: string
+          body?: string
+          created_at?: string
+        }
+        Relationships: []
       }
       trade_offers: {
         Row: {
@@ -269,6 +307,7 @@ export interface Database {
           matched_with?: string | null
           created_at?: string
         }
+        Relationships: []
       }
       trade_matches: {
         Row: {
@@ -283,6 +322,16 @@ export interface Database {
           user_b_accepted: boolean
           fee_paid: boolean
           stripe_payment_intent_id: string | null
+          user_a_photo_url: string | null
+          user_b_photo_url: string | null
+          user_a_trade_terms_accepted: boolean
+          user_b_trade_terms_accepted: boolean
+          user_a_ship_agreed: boolean
+          user_b_ship_agreed: boolean
+          user_a_tracking: string | null
+          user_b_tracking: string | null
+          completed_at: string | null
+          dispute_filed: boolean
           created_at: string
         }
         Insert: {
@@ -297,6 +346,16 @@ export interface Database {
           user_b_accepted?: boolean
           fee_paid?: boolean
           stripe_payment_intent_id?: string | null
+          user_a_photo_url?: string | null
+          user_b_photo_url?: string | null
+          user_a_trade_terms_accepted?: boolean
+          user_b_trade_terms_accepted?: boolean
+          user_a_ship_agreed?: boolean
+          user_b_ship_agreed?: boolean
+          user_a_tracking?: string | null
+          user_b_tracking?: string | null
+          completed_at?: string | null
+          dispute_filed?: boolean
           created_at?: string
         }
         Update: {
@@ -311,8 +370,79 @@ export interface Database {
           user_b_accepted?: boolean
           fee_paid?: boolean
           stripe_payment_intent_id?: string | null
+          user_a_photo_url?: string | null
+          user_b_photo_url?: string | null
+          user_a_trade_terms_accepted?: boolean
+          user_b_trade_terms_accepted?: boolean
+          user_a_ship_agreed?: boolean
+          user_b_ship_agreed?: boolean
+          user_a_tracking?: string | null
+          user_b_tracking?: string | null
+          completed_at?: string | null
+          dispute_filed?: boolean
           created_at?: string
         }
+        Relationships: []
+      }
+      trade_reviews: {
+        Row: {
+          id: string
+          match_id: string
+          reviewer_id: string
+          reviewee_id: string
+          rating: number
+          body: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          match_id: string
+          reviewer_id: string
+          reviewee_id: string
+          rating: number
+          body?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          match_id?: string
+          reviewer_id?: string
+          reviewee_id?: string
+          rating?: number
+          body?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      trade_disputes: {
+        Row: {
+          id: string
+          match_id: string
+          filed_by: string
+          reason: string
+          description: string
+          status: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          match_id: string
+          filed_by: string
+          reason: string
+          description: string
+          status?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          match_id?: string
+          filed_by?: string
+          reason?: string
+          description?: string
+          status?: string
+          created_at?: string
+        }
+        Relationships: []
       }
       deal_watches: {
         Row: {
@@ -351,6 +481,7 @@ export interface Database {
           is_active?: boolean
           created_at?: string
         }
+        Relationships: []
       }
       deals_found: {
         Row: {
@@ -401,6 +532,7 @@ export interface Database {
           is_active?: boolean
           found_at?: string
         }
+        Relationships: []
       }
       deal_alerts_sent: {
         Row: {
@@ -424,6 +556,7 @@ export interface Database {
           sent_via?: string
           sent_at?: string
         }
+        Relationships: []
       }
       flip_entries: {
         Row: {
@@ -479,6 +612,7 @@ export interface Database {
           year?: number | null
           created_at?: string
         }
+        Relationships: []
       }
       weekly_champions: {
         Row: {
@@ -508,6 +642,7 @@ export interface Database {
           roi_percent?: number | null
           created_at?: string
         }
+        Relationships: []
       }
       budget_plans: {
         Row: {
@@ -549,6 +684,7 @@ export interface Database {
           projected_roi_percent?: number | null
           created_at?: string
         }
+        Relationships: []
       }
       price_alerts: {
         Row: {
@@ -581,6 +717,7 @@ export interface Database {
           triggered_at?: string | null
           created_at?: string
         }
+        Relationships: []
       }
       flip_upvotes: {
         Row: {
@@ -601,6 +738,7 @@ export interface Database {
           user_id?: string
           created_at?: string
         }
+        Relationships: []
       }
     }
     Views: Record<string, never>

@@ -51,7 +51,7 @@ export default function ListingDetailPage() {
 
       // Increment views
       const currentViews = (data as { views?: number } | null)?.views ?? 0
-      await supabase.from('listings').update({ views: currentViews + 1 }).eq('id', id as string).catch(() => {})
+      supabase.from('listings').update({ views: currentViews + 1 }).eq('id', id as string).then(() => {})
     }
     load()
   }, [id])

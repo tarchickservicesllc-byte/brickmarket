@@ -10,12 +10,13 @@ export async function POST(request: Request) {
   const body = await request.json()
   const { listing_id } = body as { listing_id: string }
 
+  type ListingWithSeller = { id: string; seller_id: string; price: number; title: string; status: string; seller: { stripe_account_id: string | null } | null }
   const { data: listing } = await supabase
     .from('listings')
     .select('*, seller:profiles!listings_seller_id_fkey(stripe_account_id)')
     .eq('id', listing_id)
     .eq('status', 'active')
-    .single()
+    .single() as unknown as { data: ListingWithSeller | null }
 
   if (!listing) return NextResponse.json({ error: 'Listing not found or not available' }, { status: 404 })
   if (listing.seller_id === user.id) return NextResponse.json({ error: 'Cannot buy your own listing' }, { status: 400 })

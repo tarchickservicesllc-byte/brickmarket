@@ -6,6 +6,32 @@ function getResend() {
 
 const FROM = 'BrickMarket <notifications@brickmarket.app>'
 
+export async function sendTradeDisputeEmail(
+  matchId: string,
+  filedByUsername: string,
+  againstUsername: string,
+  reason: string,
+  description: string
+) {
+  await getResend().emails.send({
+    from: FROM,
+    to: 'cadetarchick21@gmail.com',
+    subject: `[DISPUTE] Trade ${matchId.slice(0, 8)} — Filed by @${filedByUsername}`,
+    html: `
+      <h2>Trade Dispute Filed</h2>
+      <table style="border-collapse:collapse;width:100%;font-family:sans-serif;font-size:14px;">
+        <tr><td style="padding:8px;font-weight:bold;background:#f1f5f9">Match ID</td><td style="padding:8px">${matchId}</td></tr>
+        <tr><td style="padding:8px;font-weight:bold;background:#f1f5f9">Filed By</td><td style="padding:8px">@${filedByUsername}</td></tr>
+        <tr><td style="padding:8px;font-weight:bold;background:#f1f5f9">Against</td><td style="padding:8px">@${againstUsername}</td></tr>
+        <tr><td style="padding:8px;font-weight:bold;background:#f1f5f9">Reason</td><td style="padding:8px">${reason}</td></tr>
+        <tr><td style="padding:8px;font-weight:bold;background:#f1f5f9">Description</td><td style="padding:8px">${description}</td></tr>
+        <tr><td style="padding:8px;font-weight:bold;background:#f1f5f9">Filed At</td><td style="padding:8px">${new Date().toLocaleString()}</td></tr>
+      </table>
+      <p style="margin-top:16px"><a href="${process.env.NEXT_PUBLIC_APP_URL}/admin" style="background:#ef4444;color:white;padding:8px 16px;text-decoration:none;border-radius:6px">View in Admin →</a></p>
+    `,
+  })
+}
+
 export async function sendTradeMatchEmail(
   toEmail: string,
   toName: string,

@@ -274,10 +274,11 @@ export async function GET(request: Request) {
     if (deal.discount_percent < 30) continue
 
     // Find Pro users with active deal watches
+    type WatchRow = { id: string; user_id: string; max_price: number | null; notify_email: boolean; notify_sms: boolean; user: { id: string; subscription_tier: string } | null }
     const { data: watches } = await service
       .from('deal_watches')
       .select('*, user:profiles(id, subscription_tier)')
-      .eq('is_active', true)
+      .eq('is_active', true) as unknown as { data: WatchRow[] | null }
 
     for (const watch of (watches ?? [])) {
       const watchUser = watch.user as { id: string; subscription_tier?: string } | null
